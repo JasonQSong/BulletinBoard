@@ -273,7 +273,7 @@ final class ConnectRequest implements Runnable {
 								// GroupName1 = (String) Sarray[0];
 								GroupID1 = (int) Sarray[1];
 								SendNotification(username, GroupID1, "LEAVE");
-								DeleteUser(userID);
+								DeleteUser(userID,GroupID1);
 								//os.writeBytes("Successfully leave group "
 									//	+ GroupID1 + "!!\n");
 							}
@@ -294,13 +294,14 @@ final class ConnectRequest implements Runnable {
 								.get(GetMessageID);
 
 						JSONObject jsonObject = new JSONObject();
-						jsonObject.put("Type", "GetMessage");
-						jsonObject.put("MessageID", GetMessage.ID);
-						jsonObject.put("MessageGroupID", GetMessage.groupID);
-						jsonObject.put("MessageSender", GetMessage.sender);
-						jsonObject.put("MessagePostTime", GetMessage.Postdate);
-						jsonObject.put("MessageSubject", GetMessage.Suject);
 						jsonObject.put("MessageContent", GetMessage.Content);
+						jsonObject.put("MessageSubject", GetMessage.Suject);
+						jsonObject.put("MessagePostTime", GetMessage.Postdate);
+						jsonObject.put("MessageSender", GetMessage.sender);
+						jsonObject.put("MessageGroupID", GetMessage.groupID);
+						jsonObject.put("MessageID", GetMessage.ID);
+						jsonObject.put("Type", "GetMessage");
+							
 						String outputS = jsonObject.toString();
 						os.writeBytes(outputS+ "\r\n\r\n");
 
@@ -446,9 +447,13 @@ final class ConnectRequest implements Runnable {
 		return DataList.UserNum - 1;
 	}
 
-	private void DeleteUser(int userID) {
-		DataList.UserList.remove(userID);
-		DataList.UserNum--;
+	private void DeleteUser(int userID,int groupID) {
+		//DataList.UserList.remove(userID);
+		//DataList.UserNum--;
+		int index=DataList.GroupSelection.get(userID).indexOf(groupID);
+		if (index!=-1) DataList.GroupSelection.get(userID).remove(index);
+		int j=1;
+		j++;
 	}
 
 	private void AddandPostMessage(int userID, String username, int groupID,
