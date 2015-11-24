@@ -11,15 +11,13 @@ import java.util.Date;
 
 import java.util.StringTokenizer;
 
-
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
-
 final class ConnectRequest implements Runnable {
 	final static String CRLF = "\r\n";
-	final static JSONParser JsonParser=new JSONParser();
+	final static JSONParser JsonParser = new JSONParser();
 	Socket socket;
 
 	// Constructor
@@ -32,7 +30,7 @@ final class ConnectRequest implements Runnable {
 		try {
 			processRequest();
 		} catch (Exception e) {
-			System.out.println(e);
+			SendError();
 		}
 	}
 
@@ -72,14 +70,12 @@ final class ConnectRequest implements Runnable {
 		 */
 
 		// From InputStream get JsonObject
-		String InputString=null, s = null;
-		if (br.ready())
-		{
+		String InputString = null, s = null;
+		if (br.ready()) {
 			InputString = GetJsonString(br);
-			JSONObject jsonObject =(JSONObject)JsonParser.parse(InputString);
-			s = (String)jsonObject.get("cmd");
+			JSONObject jsonObject = (JSONObject) JsonParser.parse(InputString);
+			s = (String) jsonObject.get("cmd");
 		}
-		
 
 		while (true) {// infinite loop until user leave
 
@@ -157,6 +153,7 @@ final class ConnectRequest implements Runnable {
 
 						// send notification
 						SendNotification(username, GroupID, "JOIN");
+						PostLastTwoMessage(GroupID);
 					}
 
 					// if GROUPPOST
@@ -164,7 +161,7 @@ final class ConnectRequest implements Runnable {
 						try {
 							// Get group
 							String GroupString = tokens.nextToken();
-							//String MessageGroupName;
+							// String MessageGroupName;
 							int MessageGroupID;
 
 							Object[] Sarray = new Object[3];
@@ -174,7 +171,7 @@ final class ConnectRequest implements Runnable {
 								Exception e = new Exception();
 								throw e;
 							} else {
-								//MessageGroupName = (String) Sarray[0];
+								// MessageGroupName = (String) Sarray[0];
 								MessageGroupID = (int) Sarray[1];
 
 								// if user is not in the target group he can't
@@ -202,7 +199,7 @@ final class ConnectRequest implements Runnable {
 											+ tokens.nextToken() + " ";
 								}
 							} catch (Exception e) {
-
+								SendError();
 							}
 							// ContentString.substring(0,ContentString.length()
 							// - 1);
@@ -213,7 +210,8 @@ final class ConnectRequest implements Runnable {
 										ContentString);
 							}
 						} catch (Exception e) {
-							os.writeBytes("Incorrect Command! Please try again!\n");
+							SendError();
+							//os.writeBytes("Incorrect Command! Please try again!\n");
 						}
 
 					}
@@ -223,7 +221,7 @@ final class ConnectRequest implements Runnable {
 						try {
 							// Get group information
 							String GroupString = tokens.nextToken();
-							//String GroupName1;
+							// String GroupName1;
 							int GroupID1;
 
 							Object[] Sarray = new Object[3];
@@ -233,14 +231,14 @@ final class ConnectRequest implements Runnable {
 								Exception e = new Exception();
 								throw e;
 							} else {
-								//GroupName1 = (String) Sarray[0];
+								// GroupName1 = (String) Sarray[0];
 								GroupID1 = (int) Sarray[1];
-								
+
 								JSONObject jsonObject = new JSONObject();
 								jsonObject.put("Type", "UserList");
-								
-								JSONArray jsonArray1=new JSONArray();
-															
+
+								JSONArray jsonArray1 = new JSONArray();
+
 								for (int i = 0; i < DataList.UserNum; i++) {
 									User user = DataList.UserList.get(i);
 									if (CheckInGroup(userID, GroupID1) == true) {
@@ -248,10 +246,12 @@ final class ConnectRequest implements Runnable {
 									}
 								}
 								jsonObject.put("Content", jsonArray1);
-								os.writeBytes(jsonObject.toString()+"\r\n\r\n");
+								os.writeBytes(jsonObject.toString()
+										+ "\r\n\r\n");
 							}
 						} catch (Exception e) {
-							os.writeBytes("Incorrect Command! Please try again!\n");
+							//os.writeBytes("Incorrect Command! Please try again!\n");
+							SendError();
 						}
 					}
 
@@ -260,7 +260,7 @@ final class ConnectRequest implements Runnable {
 						try {
 							// Get group
 							String GroupString = tokens.nextToken();
-							//String GroupName1;
+							// String GroupName1;
 							int GroupID1;
 
 							Object[] Sarray = new Object[3];
@@ -270,12 +270,12 @@ final class ConnectRequest implements Runnable {
 								Exception e = new Exception();
 								throw e;
 							} else {
-								//GroupName1 = (String) Sarray[0];
+								// GroupName1 = (String) Sarray[0];
 								GroupID1 = (int) Sarray[1];
 								SendNotification(username, GroupID1, "LEAVE");
 								DeleteUser(userID);
-								os.writeBytes("Successfully leave group "
-										+ GroupID1 + "!!\n");
+								//os.writeBytes("Successfully leave group "
+									//	+ GroupID1 + "!!\n");
 							}
 						} catch (Exception e) {
 
@@ -292,7 +292,7 @@ final class ConnectRequest implements Runnable {
 						int GetMessageID = Integer.parseInt(tokens.nextToken());
 						Message GetMessage = DataList.MessageList
 								.get(GetMessageID);
-						
+
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("Type", "GetMessage");
 						jsonObject.put("MessageID", GetMessage.ID);
@@ -303,9 +303,7 @@ final class ConnectRequest implements Runnable {
 						jsonObject.put("MessageContent", GetMessage.Content);
 						String outputS = jsonObject.toString();
 						os.writeBytes(outputS);
-						
-						
-						
+
 					}
 
 					// if GROUP
@@ -313,19 +311,20 @@ final class ConnectRequest implements Runnable {
 						// print select groups
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("Type", "GroupList");
-						
-						JSONArray jsonArray1=new JSONArray();
-													
+
+						JSONArray jsonArray1 = new JSONArray();
+
 						for (int i = 0; i < DataList.GroupList.size(); i++) {
 							jsonArray1.add(DataList.GroupList.get(i));
-							
+
 						}
 						jsonObject.put("Content", jsonArray1);
 						os.writeBytes(jsonObject.toString());
-						
+
 					}
 				} else {
-					os.writeBytes("Undefined Command!!\n");
+					
+					SendError();//os.writeBytes("Undefined Command!!\n");
 				}
 			}
 
@@ -334,8 +333,9 @@ final class ConnectRequest implements Runnable {
 			while (InputString.equals("")) {
 				InputString = GetJsonString(br);
 				if (!InputString.equalsIgnoreCase("")) {
-					JSONObject jsonObject1 = (JSONObject)JsonParser.parse(InputString);
-					s =(String) jsonObject1.get("cmd");
+					JSONObject jsonObject1 = (JSONObject) JsonParser
+							.parse(InputString);
+					s = (String) jsonObject1.get("cmd");
 					break;
 				}
 			}
@@ -376,8 +376,9 @@ final class ConnectRequest implements Runnable {
 						Socket clientSocket = user.Socket;
 						DataOutputStream os1 = new DataOutputStream(
 								clientSocket.getOutputStream());
-						os1.writeBytes(outputS+"\r\n\r\n");
+						os1.writeBytes(outputS + "\r\n\r\n");
 					} catch (Exception e) {
+						SendError();
 					}
 				}
 			}
@@ -399,8 +400,9 @@ final class ConnectRequest implements Runnable {
 						Socket clientSocket = user.Socket;
 						DataOutputStream os1 = new DataOutputStream(
 								clientSocket.getOutputStream());
-						os1.writeBytes(outputS+"\r\n\r\n");
+						os1.writeBytes(outputS + "\r\n\r\n");
 					} catch (Exception e) {
+						SendError();
 					}
 				}
 			}
@@ -423,6 +425,7 @@ final class ConnectRequest implements Runnable {
 								clientSocket.getOutputStream());
 						os1.writeBytes(outputS1);
 					} catch (Exception e) {
+						SendError();
 					}
 				}
 			}
@@ -454,13 +457,13 @@ final class ConnectRequest implements Runnable {
 		Message message = new Message();
 		message.Content = content;
 		message.Suject = subject;
-		message.groupID=groupID;
+		message.groupID = groupID;
 		message.ID = DataList.MessageNum - 1;
 		message.sender = username;
 		message.senderID = userID;
 		message.Postdate = new Date();
 		DataList.MessageList.add(message.ID, message);
-		
+
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("Type", "UserPost");
 		jsonObject.put("MessageID", message.ID);
@@ -469,7 +472,7 @@ final class ConnectRequest implements Runnable {
 		jsonObject.put("MessagePostTime", message.Postdate);
 		jsonObject.put("MessageSubject", message.Suject);
 		String outputS = jsonObject.toString();
-		
+
 		for (int i = 0; i < DataList.UserNum; i++) {
 			User user = DataList.UserList.get(i);
 			if (CheckInGroup(user.ID, groupID) == true) {
@@ -479,12 +482,12 @@ final class ConnectRequest implements Runnable {
 							clientSocket.getOutputStream());
 					os1.writeBytes(outputS);
 				} catch (Exception e) {
+					SendError();
 				}
 			}
 		}
 
 	}
-
 
 	private String GetGroupString(String s) {
 		int startIndex;
@@ -497,32 +500,44 @@ final class ConnectRequest implements Runnable {
 		return s.substring(startIndex, s.length());
 	}
 
-	private void PostLastTwoMessage(int groupID, String username ) {
+	private void SendError() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("Type", "Error");
+		jsonObject.put("Content", "Incorrect Command!Please try again!");
+		String outputS = jsonObject.toString();
 		try {
-			DataOutputStream os1 = new DataOutputStream(
-					socket.getOutputStream());
-			if (DataList.MessageNum >= 2) {
-				Message messageItem = DataList.MessageList
-						.get(DataList.MessageNum - 2);
-				os1.writeBytes("Message ID: " + messageItem.ID + "\n");
-				os1.writeBytes("Message sender: " + messageItem.sender + "\n");
-				os1.writeBytes("Message Post Date: " + messageItem.Postdate
-						+ "\n");
-				os1.writeBytes("Message Subject: " + messageItem.Content + "\n");
-				os1.writeBytes("----------------------------------------------------------\n");
-			}
-			if (DataList.MessageNum >= 1) {
-				Message messageItem = DataList.MessageList
-						.get(DataList.MessageNum - 1);
-				os1.writeBytes("Message ID: " + messageItem.ID + "\n");
-				os1.writeBytes("Message sender: " + messageItem.sender + "\n");
-				os1.writeBytes("Message Post Date: " + messageItem.Postdate
-						+ "\n");
-				os1.writeBytes("Message Subject: " + messageItem.Content + "\n");
-				os1.writeBytes("----------------------------------------------------------\n");
+			DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+			os.writeBytes(outputS);
+		} catch (Exception e) {
+			SendError();
+		}
+	}
+
+	private void PostLastTwoMessage(int groupID) {
+		try {
+			int x = 0;
+			for (int i = DataList.MessageNum - 1; i > -1; i--) {
+				Message message = DataList.MessageList.get(i);
+				if (message.groupID == groupID) {
+					x++;
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("Type", "UserPost");
+					jsonObject.put("MessageID", message.ID);
+					jsonObject.put("MessageGroupID", message.groupID);
+					jsonObject.put("MessageSender", message.sender);
+					jsonObject.put("MessagePostTime", message.Postdate);
+					jsonObject.put("MessageSubject", message.Suject);
+					String outputS = jsonObject.toString();
+					DataOutputStream os = new DataOutputStream(
+							socket.getOutputStream());
+					os.writeBytes(outputS);
+				}
+				if (x >= 2)
+					break;
 			}
 
 		} catch (Exception e) {
+			SendError();
 		}
 	}
 
@@ -540,6 +555,7 @@ final class ConnectRequest implements Runnable {
 				ans[0] = DataList.GroupList.get((int) ans[1]);
 			} catch (Exception e) {
 				ans[2] = "ERROR";
+				SendError();
 			}
 		}
 		return ans;
