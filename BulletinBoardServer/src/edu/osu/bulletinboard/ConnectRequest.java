@@ -248,7 +248,7 @@ final class ConnectRequest implements Runnable {
 									}
 								}
 								jsonObject.put("Content", jsonArray1);
-								os.writeBytes(jsonObject.toString());
+								os.writeBytes(jsonObject.toString()+"\r\n\r\n");
 							}
 						} catch (Exception e) {
 							os.writeBytes("Incorrect Command! Please try again!\n");
@@ -371,13 +371,12 @@ final class ConnectRequest implements Runnable {
 			// send to other user in group
 			for (int i = 0; i < DataList.UserNum; i++) {
 				User user = DataList.UserList.get(i);
-				if ((CheckInGroup(user.ID, groupID) == true)
-						&& (!user.Name.equals(username))) {
+				if (CheckInGroup(user.ID, groupID) == true) {
 					try {
 						Socket clientSocket = user.Socket;
 						DataOutputStream os1 = new DataOutputStream(
 								clientSocket.getOutputStream());
-						os1.writeBytes(outputS);
+						os1.writeBytes(outputS+"\r\n\r\n");
 					} catch (Exception e) {
 					}
 				}
@@ -400,7 +399,7 @@ final class ConnectRequest implements Runnable {
 						Socket clientSocket = user.Socket;
 						DataOutputStream os1 = new DataOutputStream(
 								clientSocket.getOutputStream());
-						os1.writeBytes(outputS);
+						os1.writeBytes(outputS+"\r\n\r\n");
 					} catch (Exception e) {
 					}
 				}

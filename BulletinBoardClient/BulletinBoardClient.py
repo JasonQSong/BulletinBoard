@@ -50,22 +50,31 @@ def WriteLineToMsgPad(line):
         MsgPadPos=0
     MsgPad.refresh(MsgPadPos,0,0,0,ScreenSize[0]-1,ScreenSize[1]-1)
 
+def SolvePackage(JsonStr):
+    WriteLineToMsgPad(JsonStr)
+    # PackageObj=json
+
 def KeepRead(socket,b):
+    ReadBuffer=''
     while True:
         ReceivedString=socket.recv(2048)
         if len(ReceivedString)>0:
-            WriteLineToMsgPad(ReceivedString)
+            ReadBuffer+=ReceivedString;
+            WriteLineToMsgPad('RECV:'+ReceivedString)
+            WriteLineToMsgPad('RECB:'+ReadBuffer)
+            if ReadBuffer.find('\r\n\r\n')>0:
+                JsonStr=ReadBuffer[:ReadBuffer.find('\r\n\r\n')]
+                JsonStr=JsonStr.strip()
+                ReadBuffer=ReadBuffer[ReadBuffer.find('\r\n\r\n'):]
+                ReadBuffer=ReadBuffer.lstrip()
+                SolvePackage(JsonStr)
+
 
 def InitSocket(host,port):
     global ClientSocket
     ClientSocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     ClientSocket.connect((host,port))
     thread.start_new_thread(KeepRead,(ClientSocket,None))
-    '''
-    while True:
-        cmd=raw_input()+'\n'
-        sent=ClientSocket.send(cmd);
-    '''
 
 def SendToSocket(buf):
     global ClientSocket
