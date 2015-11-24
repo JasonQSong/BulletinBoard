@@ -52,6 +52,27 @@ def WriteLineToMsgPad(line):
 
 def SolvePackage(JsonStr):
     WriteLineToMsgPad(JsonStr)
+    JsonObj=json.loads(JsonStr)
+    WriteLineToMsgPad(JsonObj['Type'])
+    OutputString=""
+    if JsonObj['Type']=='UserList':
+        UserList=JsonObj['Content']
+        for UserName in UserList:
+            WriteLineToMsgPad('User:'+UserName)
+    elif JsonObj['Type']=='UserActivity':
+        WriteLineToMsgPad('User: '+JsonObj['User']+' '+JsonObj['Activity'] +' group:'+str(JsonObj['Group']))
+    elif JsonObj['Type']=='UserPost':
+        WriteLineToMsgPad('MessageID: '+JsonObj['MessageID'])
+        WriteLineToMsgPad('MessageGroupID: '+JsonObj['MessageGroupID'] )
+        WriteLineToMsgPad('MessageSender: '+JsonObj['MessageSender'] )
+        WriteLineToMsgPad('MessagePostTime: '+JsonObj['MessagePostTime'] )
+        WriteLineToMsgPad('MessageSubject: '+JsonObj['MessageSubject'] )
+    elif JsonObj['Type']=='Error':
+        WriteLineToMsgPad(JsonObj['Content'])
+    else:
+        WriteLineToMsgPad('Unknown Message')
+
+
     # PackageObj=json
 
 def KeepRead(socket,b):
@@ -60,8 +81,6 @@ def KeepRead(socket,b):
         ReceivedString=socket.recv(2048)
         if len(ReceivedString)>0:
             ReadBuffer+=ReceivedString;
-            WriteLineToMsgPad('RECV:'+ReceivedString)
-            WriteLineToMsgPad('RECB:'+ReadBuffer)
             if ReadBuffer.find('\r\n\r\n')>0:
                 JsonStr=ReadBuffer[:ReadBuffer.find('\r\n\r\n')]
                 JsonStr=JsonStr.strip()
@@ -114,8 +133,6 @@ def main(stdscr):
                 })
         WriteLineToMsgPad(JsonStr)
         sent=SendToSocket(JsonStr+'\r\n\r\n')
-        # sent=SendToSocket('GET /')
-        WriteLineToMsgPad(str(sent))
 
 if __name__=='__main__':
     curses.wrapper(main)
