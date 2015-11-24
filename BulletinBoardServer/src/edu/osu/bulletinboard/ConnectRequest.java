@@ -296,7 +296,7 @@ final class ConnectRequest implements Runnable {
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("MessageContent", GetMessage.Content);
 						jsonObject.put("MessageSubject", GetMessage.Suject);
-						jsonObject.put("MessagePostTime", GetMessage.Postdate);
+						jsonObject.put("MessagePostTime", GetMessage.Postdate.toString());
 						jsonObject.put("MessageSender", GetMessage.sender);
 						jsonObject.put("MessageGroupID", GetMessage.groupID);
 						jsonObject.put("MessageID", GetMessage.ID);
@@ -474,7 +474,7 @@ final class ConnectRequest implements Runnable {
 		jsonObject.put("MessageID", message.ID);
 		jsonObject.put("MessageGroupID", message.groupID);
 		jsonObject.put("MessageSender", message.sender);
-		jsonObject.put("MessagePostTime", message.Postdate);
+		jsonObject.put("MessagePostTime", message.Postdate.toString());
 		jsonObject.put("MessageSubject", message.Suject);
 		String outputS = jsonObject.toString();
 
@@ -530,7 +530,7 @@ final class ConnectRequest implements Runnable {
 					jsonObject.put("MessageID", message.ID);
 					jsonObject.put("MessageGroupID", message.groupID);
 					jsonObject.put("MessageSender", message.sender);
-					jsonObject.put("MessagePostTime", message.Postdate);
+					jsonObject.put("MessagePostTime", message.Postdate.toString());
 					jsonObject.put("MessageSubject", message.Suject);
 					String outputS = jsonObject.toString();
 					DataOutputStream os = new DataOutputStream(

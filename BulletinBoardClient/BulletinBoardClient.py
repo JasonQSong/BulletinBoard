@@ -51,24 +51,35 @@ def WriteLineToMsgPad(line):
     MsgPad.refresh(MsgPadPos,0,0,0,ScreenSize[0]-1,ScreenSize[1]-1)
 
 def SolvePackage(JsonStr):
-    WriteLineToMsgPad(JsonStr)
+    WriteLineToMsgPad('[RECV]'+JsonStr)
     JsonObj=json.loads(JsonStr)
-    WriteLineToMsgPad(JsonObj['Type'])
     OutputString=""
     if JsonObj['Type']=='UserList':
         UserList=JsonObj['Content']
         for UserName in UserList:
             WriteLineToMsgPad('User:'+UserName)
+    elif JsonObj['Type']=='GroupList':
+        GroupList=JsonObj['Content']
+        for GroupName in GroupList:
+            WriteLineToMsgPad('Group:'+GroupName)
     elif JsonObj['Type']=='UserActivity':
         WriteLineToMsgPad('User: '+JsonObj['User']+' '+JsonObj['Activity'] +' group:'+str(JsonObj['Group']))
     elif JsonObj['Type']=='UserPost':
-        WriteLineToMsgPad('MessageID: '+JsonObj['MessageID'])
-        WriteLineToMsgPad('MessageGroupID: '+JsonObj['MessageGroupID'] )
+        WriteLineToMsgPad('MessageID: '+str(JsonObj['MessageID']))
+        WriteLineToMsgPad('MessageGroupID: '+str(JsonObj['MessageGroupID'] ))
         WriteLineToMsgPad('MessageSender: '+JsonObj['MessageSender'] )
         WriteLineToMsgPad('MessagePostTime: '+JsonObj['MessagePostTime'] )
         WriteLineToMsgPad('MessageSubject: '+JsonObj['MessageSubject'] )
+    elif JsonObj['Type']=='GetMessage':
+        WriteLineToMsgPad('MessageID: '+str(JsonObj['MessageID']))
+        WriteLineToMsgPad('MessageGroupID: '+str(JsonObj['MessageGroupID'] ))
+        WriteLineToMsgPad('MessageSender: '+JsonObj['MessageSender'] )
+        WriteLineToMsgPad('MessagePostTime: '+JsonObj['MessagePostTime'] )
+        WriteLineToMsgPad('MessageSubject: '+JsonObj['MessageSubject'] )
+        WriteLineToMsgPad('MessageContent: '+JsonObj['MessageContent'] )
     elif JsonObj['Type']=='Error':
-        WriteLineToMsgPad(JsonObj['Content'])
+        pass
+        # WriteLineToMsgPad(JsonObj['Content'])
     else:
         WriteLineToMsgPad('Unknown Message')
 
@@ -104,7 +115,8 @@ GroupPost=None
 def main(stdscr):
     global GroupPost
     InitScreen(stdscr)
-    InitSocket('localhost',7001)
+    InitSocket(sys.argv[1],int(sys.argv[2]))
+    WriteLineToMsgPad('[LOCAL] Connected to '+sys.argv[1]+':'+sys.argv[2])
     while True:
         cmd=ReadLineFromTypeWin()
         if cmd.lower().startswith('%grouppost'):
@@ -131,7 +143,7 @@ def main(stdscr):
                 'type':'COMMAND',
                 'cmd':'%grouppost '+GroupPost+' '+cmd
                 })
-        WriteLineToMsgPad(JsonStr)
+        WriteLineToMsgPad('[SEND]'+JsonStr)
         sent=SendToSocket(JsonStr+'\r\n\r\n')
 
 if __name__=='__main__':
