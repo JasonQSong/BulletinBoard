@@ -112,7 +112,7 @@ def main(stdscr):
                 'type':'COMMAND',
                 'cmd':'%grouppost '+GroupPost+' '+cmd
                 })
-        # WriteLineToMsgPad(JsonStr)
+        WriteLineToMsgPad(JsonStr)
         sent=SendToSocket(JsonStr+'\r\n\r\n')
         # sent=SendToSocket('GET /')
         WriteLineToMsgPad(str(sent))

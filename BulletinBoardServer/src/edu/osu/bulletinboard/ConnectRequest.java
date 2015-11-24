@@ -88,13 +88,13 @@ final class ConnectRequest implements Runnable {
 				if (DataList.CheckCommandType.contains(CommandType)) {
 
 					// if username
-					if (CommandType.equals("%USERNAME")) {
+					if(CommandType.toLowerCase().startsWith("%username")){
 						username = tokens.nextToken();
 						userID = AddUser(username);
 					}
 
 					// if GROUPJOIN
-					if (CommandType.equals("%GROUPJOIN")) {
+					if (CommandType.toLowerCase().startsWith("%groupjoin")) {
 
 						String groupString = GetGroupString(s);
 
@@ -157,7 +157,7 @@ final class ConnectRequest implements Runnable {
 					}
 
 					// if GROUPPOST
-					if (CommandType.equals("%GROUPPOST")) {
+					if (CommandType.toLowerCase().startsWith("%grouppost")) {
 						try {
 							// Get group
 							String GroupString = tokens.nextToken();
@@ -217,7 +217,7 @@ final class ConnectRequest implements Runnable {
 					}
 
 					// if GROUPUSERS
-					if (CommandType.equals("%GROUPUSERS")) {
+					if (CommandType.toLowerCase().startsWith("%groupusers")) {
 						try {
 							// Get group information
 							String GroupString = tokens.nextToken();
@@ -256,7 +256,7 @@ final class ConnectRequest implements Runnable {
 					}
 
 					// if GROUPLEAVE
-					if (CommandType.equals("%GROUPLEAVE")) {
+					if (CommandType.toLowerCase().startsWith("%groupleave")) {
 						try {
 							// Get group
 							String GroupString = tokens.nextToken();
@@ -283,11 +283,11 @@ final class ConnectRequest implements Runnable {
 					}
 
 					// IF EXIT
-					if (CommandType.equals("%EXIT")) {
+					if (CommandType.toLowerCase().startsWith("%exit")) {
 						break;
 					}
 					// if GROUPMESSAGE
-					if (CommandType.equals("%GROUPMESSAGE")) {
+					if (CommandType.toLowerCase().startsWith("%groupmessage")){
 						tokens.nextToken();
 						int GetMessageID = Integer.parseInt(tokens.nextToken());
 						Message GetMessage = DataList.MessageList
@@ -302,12 +302,12 @@ final class ConnectRequest implements Runnable {
 						jsonObject.put("MessageSubject", GetMessage.Suject);
 						jsonObject.put("MessageContent", GetMessage.Content);
 						String outputS = jsonObject.toString();
-						os.writeBytes(outputS);
+						os.writeBytes(outputS+ "\r\n\r\n");
 
 					}
 
 					// if GROUP
-					if (CommandType.equals("%GROUPS")) {
+					if (CommandType.toLowerCase().startsWith("%groups")) {
 						// print select groups
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("Type", "GroupList");
@@ -319,7 +319,7 @@ final class ConnectRequest implements Runnable {
 
 						}
 						jsonObject.put("Content", jsonArray1);
-						os.writeBytes(jsonObject.toString());
+						os.writeBytes(jsonObject.toString()+ "\r\n\r\n");
 
 					}
 				} else {
@@ -371,7 +371,7 @@ final class ConnectRequest implements Runnable {
 			// send to other user in group
 			for (int i = 0; i < DataList.UserNum; i++) {
 				User user = DataList.UserList.get(i);
-				if (CheckInGroup(user.ID, groupID) == true) {
+				if ((CheckInGroup(user.ID, groupID) == true)&& (!user.Name.equals(username))) {
 					try {
 						Socket clientSocket = user.Socket;
 						DataOutputStream os1 = new DataOutputStream(
@@ -423,7 +423,7 @@ final class ConnectRequest implements Runnable {
 						Socket clientSocket = socket;
 						DataOutputStream os1 = new DataOutputStream(
 								clientSocket.getOutputStream());
-						os1.writeBytes(outputS1);
+						os1.writeBytes(outputS1+ "\r\n\r\n");
 					} catch (Exception e) {
 						SendError();
 					}
@@ -480,7 +480,7 @@ final class ConnectRequest implements Runnable {
 					Socket clientSocket = user.Socket;
 					DataOutputStream os1 = new DataOutputStream(
 							clientSocket.getOutputStream());
-					os1.writeBytes(outputS);
+					os1.writeBytes(outputS+ "\r\n\r\n");
 				} catch (Exception e) {
 					SendError();
 				}
@@ -507,7 +507,7 @@ final class ConnectRequest implements Runnable {
 		String outputS = jsonObject.toString();
 		try {
 			DataOutputStream os = new DataOutputStream(socket.getOutputStream());
-			os.writeBytes(outputS);
+			os.writeBytes(outputS+ "\r\n\r\n");
 		} catch (Exception e) {
 			SendError();
 		}
@@ -530,7 +530,7 @@ final class ConnectRequest implements Runnable {
 					String outputS = jsonObject.toString();
 					DataOutputStream os = new DataOutputStream(
 							socket.getOutputStream());
-					os.writeBytes(outputS);
+					os.writeBytes(outputS+ "\r\n\r\n");
 				}
 				if (x >= 2)
 					break;

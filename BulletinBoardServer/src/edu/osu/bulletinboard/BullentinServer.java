@@ -45,9 +45,17 @@ public class BullentinServer {
 		DataList.GroupIDList.add(2);
 		DataList.GroupIDList.add(3);
 		
-		DataList.CheckCommandType.add("%LEAVE");
+		
+		DataList.CheckCommandType.add("%grouppost");
+		DataList.CheckCommandType.add("%groupjoin");
+		DataList.CheckCommandType.add("%groupusers");
+		DataList.CheckCommandType.add("%groupleave");
+		DataList.CheckCommandType.add("%groupmessage");
+		DataList.CheckCommandType.add("%exit");
+		DataList.CheckCommandType.add("%groups");
+		DataList.CheckCommandType.add("%username");
+		
 		DataList.CheckCommandType.add("%GROUPPOST");
-		DataList.CheckCommandType.add("%GET");
 		DataList.CheckCommandType.add("%GROUPJOIN");
 		DataList.CheckCommandType.add("%GROUPUSERS");
 		DataList.CheckCommandType.add("%GROUPLEAVE");
