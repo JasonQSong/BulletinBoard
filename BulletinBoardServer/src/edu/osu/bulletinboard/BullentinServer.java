@@ -3,6 +3,8 @@ package edu.osu.bulletinboard;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.print.attribute.standard.PrinterLocation;
+
 public class BullentinServer {
 	public static void main(String argv[]) throws Exception{
 		
@@ -35,9 +37,13 @@ public class BullentinServer {
 	    }
 	private static void Initial(){
 		DataList.GroupList.add("Rental");
-		DataList.GroupList.add("Computer Science");
+		DataList.GroupList.add("ComputerScience");
 		DataList.GroupList.add("Math");
 		DataList.GroupList.add("Food");
+		DataList.GroupIDList.add(0);
+		DataList.GroupIDList.add(1);
+		DataList.GroupIDList.add(2);
+		DataList.GroupIDList.add(3);
 		
 		DataList.CheckCommandType.add("%LEAVE");
 		DataList.CheckCommandType.add("%GROUPPOST");
@@ -48,6 +54,7 @@ public class BullentinServer {
 		DataList.CheckCommandType.add("%GROUPMESSAGE");
 		DataList.CheckCommandType.add("%EXIT");
 		DataList.CheckCommandType.add("%GROUPS");
+		DataList.CheckCommandType.add("%USERNAME");
 		
 	}
 }

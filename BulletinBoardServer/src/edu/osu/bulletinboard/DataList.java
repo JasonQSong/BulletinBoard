@@ -13,8 +13,9 @@ public class DataList {
 	public static HashSet<Socket> ClientSocketList= new HashSet<Socket>();//Store all clients' socket
 	
 	public static ArrayList<String> GroupList= new ArrayList<String>();//store what group we have
+	public static ArrayList<Integer> GroupIDList= new ArrayList<Integer>();//store what group we have
 	
 	public static boolean[][] GroupSelectionList =new boolean[100][10]; //tag what groups a user join
-	
+	public static ArrayList<ArrayList<Integer>> GroupSelection= new ArrayList<ArrayList<Integer>>();
 	public static HashSet<String> CheckCommandType = new HashSet<String>();//store what command we have
 }
