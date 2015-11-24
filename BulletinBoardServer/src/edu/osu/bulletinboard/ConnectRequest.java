@@ -53,7 +53,16 @@ final class ConnectRequest implements Runnable {
 		os.writeBytes("If you want to retrieve a message, use %GET+Message ID\n");
 		os.writeBytes("If you want to %leave, use LEAVE\n");
 		os.writeBytes("----------------------------------------------------------\n");
-
+		int xxx=0;
+			
+		while(true){
+			Thread.sleep(1000);
+			os.writeBytes("----------------------------------------------------------\n");
+			xxx++;
+			if(xxx>1000)
+				break;
+		}
+			
 		// print last 2 message
 		PostLastTwoMessage();
 
