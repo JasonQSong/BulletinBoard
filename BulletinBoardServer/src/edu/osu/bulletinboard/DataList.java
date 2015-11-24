@@ -1,8 +1,7 @@
-package ServerSidePack;
+package edu.osu.bulletinboard;
 
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 //要不要存一些数据到本地文件？

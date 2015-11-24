@@ -1,8 +1,6 @@
-package ServerSidePack;
+package edu.osu.bulletinboard;
 
 import java.util.Date;
-
-import javax.print.attribute.standard.DateTimeAtCompleted;
 
 public class Message {
 	public int ID;

@@ -1,4 +1,4 @@
-package ServerSidePack;
+package edu.osu.bulletinboard;
 
 import java.net.Socket;
 

@@ -1,11 +1,7 @@
-package ServerSidePack;
-
-import ServerSidePack.ConnectRequest;
+package edu.osu.bulletinboard;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import javax.print.attribute.standard.PrinterLocation;
 
 public class BullentinServer {
 	public static void main(String argv[]) throws Exception{

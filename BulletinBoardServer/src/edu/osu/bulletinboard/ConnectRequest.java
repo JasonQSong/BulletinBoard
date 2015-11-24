@@ -1,4 +1,4 @@
-package ServerSidePack;
+package edu.osu.bulletinboard;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -6,17 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.StringTokenizer;
 
-import jdk.nashorn.internal.ir.ContinueNode;
 
-import com.sun.media.jai.opimage.AddCollectionCRIF;
-import com.sun.tracing.dtrace.ProviderAttributes;
-import com.sun.xml.internal.ws.client.SenderException;
-import com.sun.xml.internal.ws.resources.AddressingMessages;
 
 final class ConnectRequest implements Runnable {
 	final static String CRLF = "\r\n";
